@@ -1,6 +1,7 @@
 #include "src/mnist.h"
 #include "src/network.h"
 #include "src/layer.h"
+#include <ctime>
 
 #include <iomanip>
 #include <nvtx3/nvToolsExt.h>
@@ -9,6 +10,7 @@ using namespace cudl;
 
 int main(int argc, char* argv[])
 {
+    clock_t total_t;
     /* configure the network */
     int batch_size_train = 256;
     int num_steps_train = 2400;
@@ -21,7 +23,7 @@ int main(int argc, char* argv[])
     bool file_save = false;
 
     int batch_size_test = 10;
-    int num_steps_test = 1000;
+    int num_steps_test = 10000;
 
 
     /* Welcome Message */
@@ -117,6 +119,7 @@ int main(int argc, char* argv[])
     test_data_loader.get_batch();
     tp_count = 0;
     step = 0;
+    total_t = clock();
     while (step < num_steps_test)
     {
         // nvtx profiling start
@@ -137,6 +140,8 @@ int main(int argc, char* argv[])
         // nvtx profiling stop
         nvtxRangePop();
     }
+    total_t = clock() - total_t;
+    printf("mnist total time (ms): %f \n", (float)total_t / CLOCKS_PER_SEC * 1000);
 
     // step 4. calculate loss and accuracy
     float loss = model.loss(test_target);

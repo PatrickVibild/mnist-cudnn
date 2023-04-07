@@ -5,6 +5,7 @@ TARGET=train convolution
 
 INCLUDES = -I${CUDA_PATH}/samples/common/inc -I$(CUDA_PATH)/include
 NVCC_FLAGS=-G --resource-usage -Xcompiler -rdynamic -Xcompiler -fopenmp -rdc=true -lnvToolsExt
+#
 
 IS_CUDA_11:=$(shell echo `nvcc --version | grep compilation | grep -Eo -m 1 '[0-9]+.[0-9]' | head -1` \>= 11.0 | bc)
 
@@ -28,7 +29,7 @@ INCS = ${SRC_DIR}/helper.h ${SRC_DIR}/blob.h ${SRC_DIR}/blob.h ${SRC_DIR}/layer.
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.cpp ${INCS}
 	$(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -c $< -o $@
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.cu ${INCS}
-	$(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -c $< -o $@
+	$(NVCC) --cudart=shared $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -c $< -o $@
 
 ${OBJ_DIR}/train.o: train.cpp ${INCS}
 	@mkdir -p $(@D)
@@ -37,10 +38,10 @@ ${OBJ_DIR}/train.o: train.cpp ${INCS}
 OBJS = ${OBJ_DIR}/train.o ${OBJ_DIR}/mnist.o ${OBJ_DIR}/loss.o ${OBJ_DIR}/layer.o ${OBJ_DIR}/network.o 
 
 train: $(OBJS)
-	$(EXEC) $(NVCC) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ $+
+	$(EXEC) $(NVCC)  $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ $+
 
-convolution: convolution.cu
-	$(EXEC) $(NVCC) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ $+
+#convolution: convolution.cu
+#	$(EXEC) $(NVCC) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ $+
 
 .PHONY: clean
 clean:

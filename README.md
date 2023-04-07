@@ -3,12 +3,19 @@ Transparent CUDNN / CUBLAS usage for the deep learning training using MNIST data
 
 # How to use
 
+Get and download dataset.
 ```bash
-$ git clone https://github.com/haanjack/cudnn-mnist-training
-$ cd cudnn-mnist-training
-$ bash download-mnist-dataset.sh
-$ make
-$ ./train
+git clone https://github.com/PatrickVibild/mnist-cudnn
+cd mnist-cudnn
+bash download-mnist.sh
+```
+Build
+```bash
+make
+```
+Run
+```Build
+./train
 ```
 
 # Expected output
